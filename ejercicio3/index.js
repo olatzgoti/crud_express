@@ -21,10 +21,11 @@ app.get('/productos', (req,res)=>{
     
     let {nombre, precio} = req.body;
     
-    if (!nombre || !precio) {         
+    console.log(req.body);
+   /* if (!nombre || !precio) {         
       nombre = req.query.nombre;         
       precio = req.query.precio;     
-    }
+    }*/
     const newProduct = { id: productos.length+1, nombre, precio}
 
    if( !nombre || !precio )
@@ -37,19 +38,17 @@ app.get('/productos', (req,res)=>{
   })
 
 
-
-
   app.put('/productos/id/:id', (req,res)=>{
-    const found = productos.some((producto)=>producto.id == req.params.id)
+    const productId = parseInt(req.params.id, 10); // Convierte a número
+    const found = productos.some((producto)=>producto.id === productId)
     if(found){
         productos.forEach((producto)=>{
-            if(producto.id == req.params.id)
+            if(producto.id === productId)
             {
-                producto.name = req.params.name || producto.name,
-                producto.precio = req.params.precio || producto.precio
-                console.log(req.params.precio); //NO ENVIA EL PRECIO
+                producto.nombre = req.body.nombre || producto.nombre,
+                producto.precio = req.body.precio || producto.precio
+                console.log(req.body.precio); //NO ENVIA EL PRECIO
                 res.send(producto)
-
             }
         })    
     }
@@ -58,28 +57,46 @@ app.get('/productos', (req,res)=>{
       res.status(404).send('error');
     }
   })
+/*
+  if (found) {
+      products.forEach(product => {
+          if (product.id === productId) {
+              product.nombre = req.body.nombre ? req.body.nombre : product.nombre;
+              product.precio = req.body.precio ? req.body.precio : product.precio;
+              res.send(product);
+          }
+      });
+  } else {
+      res.status(404).send('Error: Producto no encontrado');
+  }
+});
+*/
+
 
  app.delete('/producto/id/:id', (req,res)=>{
-  const found = productos.some((producto)=> producto.id == req.params.id)
+  const productId = req.params.id;
+  console.log(productId);
+
+  const found = productos.some((producto)=> producto.id === +productId)//Convierto el valor que viene por la url de STRING a NUMBER
+
+
 
     if(found)
     {
-      const deleteItem = productos.filter((producto)=>producto.id != req.params.id)
+      const deleteItem = productos.filter((producto)=>producto.id !== +productId) //Paso productId de STRING  a NUMBER por venir por URL
+console.log(deleteItem)
       res.send(deleteItem);
-    }
 
+    }
+  
     else
   {
     res.status(400).send({message:'No existe lo q buscas'})
-
   }
-
  })
 
 
 
 app.listen(PORT, ()=>{
-
     console.log(`Server started at port ${PORT}`);
 })
-
