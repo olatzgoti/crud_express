@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const PORT = 3000;
+const PORT = 5463;
 app.use(express.json())
 
 const productos = [
@@ -79,24 +79,55 @@ app.get('/productos', (req,res)=>{
 
   const found = productos.some((producto)=> producto.id === +productId)//Convierto el valor que viene por la url de STRING a NUMBER
 
-
-
     if(found)
     {
       const deleteItem = productos.filter((producto)=>producto.id !== +productId) //Paso productId de STRING  a NUMBER por venir por URL
 console.log(deleteItem)
       res.send(deleteItem);
-
     }
-  
     else
   {
     res.status(400).send({message:'No existe lo q buscas'})
   }
  })
 
+ //Busqueda de producto por id
+app.get('/producto/id/:id', (req,res)=>{
+
+  const productId = req.params.id;
+  const found = productos.filter((producto)=>producto.id === +productId)
+
+  if(found)
+  {res.status(200).send(found)}
+
+  else
+  {
+    res.send(console.log('No se ha encontrado'))
+  }
+})
+
+app.get('/producto/nombre/:nombre', (req,res)=>{
+  const productNombre = req.params.nombre;
+  console.log(productNombre.toLowerCase())
+  console.log(productos);
+
+  console.log(productos.map(producto=>producto.nombre.toLowerCase()))
+  
+  const found = productos.find(producto => producto.nombre.toLowerCase() === productNombre.toLowerCase());
+
+  console.log(found)
+//HACERLO BUSCANDO EL ID DE ESE NOMBRE
 
 
+if(found)
+{
+  res.send({description: 'encontrado', item: found});
+}
+else
+{
+  res.send('No existe ese producto');
+}
+})
 app.listen(PORT, ()=>{
-    console.log(`Server started at port ${PORT}`);
+    console.log(`Server started at port 5463 ${PORT}`);
 })
